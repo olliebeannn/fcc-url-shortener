@@ -21,12 +21,12 @@ class Urls {
 
         let newUrl = {
             originalUrl: url,
-            shortUrl: `sho.rt/${short}`
+            shortUrl: short
         };
 
         this.data.push(newUrl);
 
-        return newUrl.shortUrl;
+        return newUrl;
     }
 
     lookupShortUrl(shortUrl) {

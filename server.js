@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const {Urls} = require('./utils/urls');
 
@@ -7,26 +8,47 @@ const port = process.env.PORT || 3000;
 
 let app = express();
 
+app.use(express.static(__dirname + '/public'));
+
+app.use(bodyParser.json());
+
 let urls = new Urls();
 
 // Test code
 
-let shortUrl = urls.addUrl('https://google.com');
-
-console.log('shortUrl:', shortUrl);
-
-console.log('all urls:', urls);
-
-console.log('find by original url', urls.lookupOriginalUrl('https://google.com'));
-
-console.log('find by short url', urls.lookupShortUrl(shortUrl));
+// let shortUrl = urls.addUrl('https://google.com').shortUrl;
+//
+// console.log('shortUrl:', shortUrl);
+//
+// console.log('all urls:', urls);
+//
+// console.log('find by original url', urls.lookupOriginalUrl('https://google.com'));
+//
+// console.log('find by short url', urls.lookupShortUrl(shortUrl));
 
 // Test code end
 
-app.use(express.static(__dirname + '/public'));
-
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/views/index.html');
+});
+
+app.post('/api/shorturl/new', (req, res) => {
+    // console.log(req.body);
+    let url = req.body.url;
+
+    let newUrlObj = urls.addUrl(url);
+
+    console.log(urls);
+
+    res.send(newUrlObj);
+
+    // res.send(req.body);
+});
+
+app.get('/api/shorturl/:shorturl', (req, res) => {
+    let url = urls.lookupShortUrl(req.params.shorturl);
+
+    res.send(url);
 });
 
 app.listen(port, () => {
