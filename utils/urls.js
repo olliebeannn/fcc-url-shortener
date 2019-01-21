@@ -17,24 +17,30 @@ class Urls {
     }
 
     addUrl(url) {
-        let short = randomstring.generate(8);
+        let foundUrl = this.lookupOriginalUrl(url);
 
-        let newUrl = {
-            originalUrl: url,
-            shortUrl: short
-        };
+        if (foundUrl) {
+            return foundUrl;
+        } else {
+            let short = randomstring.generate(8);
 
-        this.data.push(newUrl);
+            let newUrl = {
+                originalUrl: url,
+                shortUrl: short
+            };
 
-        return newUrl;
+            this.data.push(newUrl);
+
+            return newUrl;
+        }
     }
 
     lookupShortUrl(shortUrl) {
-        return this.data.filter((url) => shortUrl === url.shortUrl);
+        return this.data.filter((url) => shortUrl === url.shortUrl)[0];
     }
 
     lookupOriginalUrl(originalUrl) {
-        return this.data.filter((url) => originalUrl === url.originalUrl);
+        return this.data.filter((url) => originalUrl === url.originalUrl)[0];
     }
 };
 
