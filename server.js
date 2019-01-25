@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const dns = require('dns');
 
 const {Urls} = require('./utils/urls');
 
@@ -33,8 +34,6 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api/shorturl/new', (req, res) => {
-    // console.log(req.body);
-
     let url = req.body.url;
 
     // Look for https:// at beginning and strip it off
@@ -45,21 +44,26 @@ app.post('/api/shorturl/new', (req, res) => {
     }
 
     // Check if URL is valid or not, return error if not
-    
-
-    let newUrlObj = urls.addUrl(url);
-
-    console.log(urls);
-
-    res.send(newUrlObj);
-
-    // res.send(req.body);
+    dns.lookup(url, (err) => {
+        if (err) {
+            res.send({"error": "Invalid URL"});
+        } else {
+            let newUrlObj = urls.addUrl(url);
+            // console.log(urls);
+            res.send(newUrlObj);
+        }
+    });
 });
 
 app.get('/api/shorturl/:shorturl', (req, res) => {
     let url = urls.lookupShortUrl(req.params.shorturl);
 
-    res.redirect('https://' + url.originalUrl);
+    // Check if short URL found; send error if not
+    if (url) {
+        res.redirect('https://' + url.originalUrl);
+    } else {
+        res.send({"error": "No URL found for this short URL."});
+    }
 
     // res.send(url);
 });
