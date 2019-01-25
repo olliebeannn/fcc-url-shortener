@@ -11,6 +11,7 @@ let app = express();
 
 app.use(express.static(__dirname + '/public'));
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 let urls = new Urls();
@@ -34,6 +35,8 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api/shorturl/new', (req, res) => {
+    console.log(req.body);
+
     let url = req.body.url;
 
     // Look for https:// at beginning and strip it off
