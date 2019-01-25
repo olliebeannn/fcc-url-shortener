@@ -34,7 +34,18 @@ app.get('/', (req, res) => {
 
 app.post('/api/shorturl/new', (req, res) => {
     // console.log(req.body);
+
     let url = req.body.url;
+
+    // Look for https:// at beginning and strip it off
+    const httpsRegex = /^https?:\/\//;
+
+    if (httpsRegex.test(url)) {
+        url = url.replace(httpsRegex, '');
+    }
+
+    // Check if URL is valid or not, return error if not
+    
 
     let newUrlObj = urls.addUrl(url);
 
@@ -48,7 +59,9 @@ app.post('/api/shorturl/new', (req, res) => {
 app.get('/api/shorturl/:shorturl', (req, res) => {
     let url = urls.lookupShortUrl(req.params.shorturl);
 
-    res.send(url);
+    res.redirect('https://' + url.originalUrl);
+
+    // res.send(url);
 });
 
 app.listen(port, () => {
